@@ -6,7 +6,7 @@ Personal utility tools by [Zephryve](https://github.com/zephryve).
 
 | Tool | Description |
 |------|-------------|
-| _coming soon_ | — |
+| [sleep-toggle](./sleep-toggle/) | macOS 菜单栏一键切换系统睡眠开关 |
 
 ## Related
 
