@@ -72,7 +72,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
         let symbolName = sleepDisabled ? "bolt.circle.fill" : "bolt.circle"
         let description = sleepDisabled ? "强力模式" : "正常模式"
-        let tooltip = sleepDisabled ? "强力模式：睡眠已禁止" : "正常模式：睡眠正常"
+        let tooltip = sleepDisabled ? "强力模式：保持唤醒" : "正常模式：可以睡眠"
         if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: description) {
             let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .medium)
             let configured = image.withSymbolConfiguration(config)!
