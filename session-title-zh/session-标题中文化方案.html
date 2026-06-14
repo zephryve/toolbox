@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Session 标题中文化 · 方案</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--ink:#1a1a1a;--paper:#faf9f7;--accent:#c45a3c;--accent-bg:#fbf3f0;--muted:#6b6560;--line:#e3e0db;--bg:#eeedea;
+--green:#0f6e56;--green-bg:#e1f5ee;--blue:#2b5bd7;--blue-bg:#eef1f8;--amber:#854f0b;--amber-bg:#faeeda;--red:#a8482f;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:#3a3632;font-family:'Noto Sans SC',system-ui,sans-serif;font-size:16px;line-height:1.8;-webkit-font-smoothing:antialiased;}
+.page{max-width:860px;margin:0 auto;background:var(--paper);min-height:100vh;padding:48px 36px 80px;box-shadow:0 2px 40px rgba(0,0,0,.04);}
+h1,h2,h3{font-family:'Noto Serif SC',serif;color:var(--ink);line-height:1.4;}
+h1{font-size:27px;margin-bottom:6px;letter-spacing:.5px;}
+.sub{color:var(--muted);font-size:14px;margin-bottom:30px;}
+h2{font-size:20px;margin:40px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--ink);}
+h2 .no{color:var(--accent);margin-right:8px;font-size:16px;}
+h3{font-size:16px;margin:22px 0 10px;padding-left:12px;border-left:3px solid var(--accent);}
+p{margin-bottom:12px;}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:#f1efe9;padding:1px 6px;border-radius:4px;color:var(--ink);}
+pre{background:#1a1a1a;color:#e8e6e1;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;padding:14px 16px;border-radius:8px;overflow-x:auto;margin:12px 0;}
+pre .c{color:#8a8780;}
+.bar{border-left:4px solid var(--accent);padding:13px 18px;background:var(--accent-bg);margin:20px 0;font-size:16px;}
+.bar strong{color:var(--ink);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
+th{text-align:left;font-weight:700;color:var(--ink);border-bottom:2px solid var(--ink);padding:8px 10px 6px;white-space:nowrap;}
+td{border-bottom:1px solid var(--line);padding:9px 10px;vertical-align:top;}
+.tag{display:inline-block;font-size:12.5px;padding:1px 9px;border-radius:10px;white-space:nowrap;}
+.t-g{background:var(--green-bg);color:var(--green);border:1px solid var(--green);}
+.t-r{background:var(--accent-bg);color:var(--accent);border:1px solid var(--accent);}
+.t-a{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber);}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;font-size:14px;}
+.box{border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:#fff;flex:1;min-width:120px;}
+.box .h{font-weight:700;color:var(--ink);font-size:13px;}
+.box .d{color:var(--muted);font-size:12.5px;margin-top:3px;}
+.box.ai{border-color:var(--blue);background:var(--blue-bg);}
+.box.cust{border-color:var(--green);background:var(--green-bg);}
+.arrow{color:var(--accent);font-weight:700;font-size:18px;}
+.proof{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 18px;margin:12px 0;}
+.proof .k{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);}
+.win{color:var(--green);font-weight:700;}
+.lose{color:var(--muted);text-decoration:line-through;}
+.decision{border:1.5px solid var(--accent);border-radius:10px;padding:16px 20px;margin:18px 0;background:var(--accent-bg);}
+.decision .lab{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:1px;}
+ul.tight{padding-left:22px;margin:8px 0 14px;}
+ul.tight li{margin-bottom:6px;font-size:15px;}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;}
+@media(max-width:600px){.page{padding:30px 16px 60px;}h1{font-size:23px;}.flow{flex-direction:column;align-items:stretch;}td,th{padding:7px 6px;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>Claude Code Session 标题中文化</h1>
+<p class="sub">方案 · 2026-06-14 · 跃西风 Zephryve · 机制全部实测验证</p>
+
+<div class="bar">
+<strong>一句话：</strong>往 session jsonl 追加一条中文 <code>custom-title</code> 记录，picker 即显示中文，且<strong>设一次就锁死、永不随对话改动而变</strong>——因为 custom-title 优先级压过 AI 自动生成的 ai-title。
+</div>
+
+<h2><span class="no">壹</span>现象与目标</h2>
+<p>中文用户（首条消息、全程对话都中文）的 session 列表里，标题大多是英文，且改了名还担心"会不会又变回去"：</p>
+<table>
+<tr><th>picker 现在显示</th><th>想要</th></tr>
+<tr><td>Plan Zephryve Engine architecture and workflow</td><td>规划 Zephryve 飞轮架构</td></tr>
+<tr><td>Scrape Alibaba job listings from career site</td><td>抓取阿里招聘岗位</td></tr>
+<tr><td>Design scoring system for job evaluation results</td><td>岗位评估打分系统设计</td></tr>
+</table>
+<p>目标两条：<strong>① 标题中文 ② 不老变</strong>（不能因为对话又更新了、标题又跳）。</p>
+
+<h2><span class="no">贰</span>机制原理（实测，非推断）</h2>
+<p>session jsonl 里有<strong>两种</strong>标题记录，谁压谁是关键：</p>
+<div class="flow">
+<div class="box ai"><div class="h">ai-title（aiTitle）</div><div class="d">Claude Code 自动生成 · <strong>默认英文</strong> · 随对话反复重写（实测一个 session 写了 715 次）</div></div>
+<span class="arrow">被压 ↓</span>
+<div class="box cust"><div class="h">custom-title（customTitle）</div><div class="d">用户设定（GUI 改名 / 本工具）· <strong>优先级更高</strong> · 写入即锁定</div></div>
+</div>
+
+<h3>三个实测铁证</h3>
+<div class="proof">
+<div class="k">① ai-title 默认英文，跟对话语言无关</div>
+<p style="margin:6px 0 0;font-size:14.5px;">抽样 8 个 session：首条消息 <span class="win">100% 中文</span>，aiTitle <span style="color:var(--red);font-weight:700;">100% 英文</span>；全库搜"中文 aiTitle"零命中。<code>settings.json</code> 的 <code>language</code> 配置只管 Claude 回复语言/语音听写，<strong>不管标题</strong>（官方文档确认无标题语言配置项）。</p>
+</div>
+<div class="proof">
+<div class="k">② custom-title 压 ai-title，写一次锁死</div>
+<p style="margin:6px 0 0;font-size:14.5px;">session <code>c11c6a52</code>：<span class="lose">ai-title × 715（英文 Web scraping CRS）</span> + <span class="win">custom-title × 715（中文 抓取CRS中外合作办学网页）</span> → picker 显示<strong>中文</strong>。ai-title 重写 715 次都盖不过。</p>
+</div>
+<div class="proof">
+<div class="k">③ 外部写入 picker 认</div>
+<p style="margin:6px 0 0;font-size:14.5px;">往已关闭 session <code>0fc67be7</code>（原 "Update Claude CLI"）jsonl 追加 custom-title "升级 Claude CLI" → 刷新 picker → <span class="win">标题变中文 ✅</span>（本方案前已实验通过）。</p>
+</div>
+
+<h2><span class="no">叁</span>方案</h2>
+<p>工具只做一件事：给「有英文 ai-title 但无 custom-title」的 session <strong>追加</strong>一条中文 custom-title。</p>
+<ul class="tight">
+<li><strong>幂等</strong>——已有 custom-title 的跳过，每个标题只中文化一次，写入即锁定，重复跑无副作用。这就是"不老变"的保证。</li>
+<li><strong>只追加不改原内容</strong>——往 jsonl 末尾加一行，绝不动原有任何行。</li>
+<li><strong>写前整目录备份</strong>——备份到 <code>~/.claude/.session-title-backups/{时间戳}/</code>，picker 异常可整目录还原。</li>
+</ul>
+
+<h3>两步走</h3>
+<table>
+<tr><th>步骤</th><th>做什么</th><th>状态</th></tr>
+<tr><td><strong>存量批量</strong></td><td><code>--apply</code> 扫所有 session，把英文 ai-title 翻成中文、追加 custom-title（claude -p 批量翻译）</td><td><span class="tag t-r">待你确认跑</span></td></tr>
+<tr><td><strong>增量自动</strong></td><td>挂 <strong>SessionEnd hook</strong>（不是 Stop）——新 session 结束时自动中文化（已关闭场景，实测安全）</td><td><span class="tag t-a">可选</span></td></tr>
+</table>
+
+<h3>为什么增量用 SessionEnd 不用 Stop</h3>
+<p>custom-title 是 Claude Code 内部维护的状态（每次保存同步重写）。对<strong>正活着</strong>的 session 从外部写，可能被下次保存覆盖。<strong>SessionEnd</strong> 时 session 已关闭、标题已定——跟实验的已关闭 session 同场景，写入安全。</p>
+
+<h2><span class="no">肆</span>用法</h2>
+<pre><span class="c"># 1. 只扫描统计（不写文件）</span>
+python3 session_title_zh.py --scan --project zephryve-engine
+
+<span class="c"># 2. 翻译并写入（自动备份 + 幂等）</span>
+python3 session_title_zh.py --apply --project zephryve-engine
+
+<span class="c"># 3. SessionEnd hook 模式（只处理当前 session）</span>
+python3 session_title_zh.py --hook</pre>
+
+<h2><span class="no">伍</span>当前规模（zephryve-engine 实测）</h2>
+<table>
+<tr><th>类别</th><th>数量</th><th>处置</th></tr>
+<tr><td>英文 ai-title 无 custom-title</td><td><strong>22</strong></td><td>待转 → apply 一次转完</td></tr>
+<tr><td>已有 custom-title（此前手动改的中文）</td><td>4</td><td>跳过（已锁定）</td></tr>
+<tr><td>eval 批跑空壳（无 ai-title）</td><td>187</td><td>不处理</td></tr>
+</table>
+
+<div class="decision">
+<span class="lab">决策点 · 等你拍板</span>
+<ul class="tight" style="margin-top:8px;margin-bottom:0;">
+<li><strong>跑存量 apply 吗？</strong>22 个英文标题一次转中文（备份后写，可还原）。</li>
+<li><strong>挂 SessionEnd hook 吗？</strong>以后新 session 自动中文化（幂等只写一次）。</li>
+<li><strong>这工具放哪？</strong>现在在 <code>~/zephryve/toolbox/session-title-zh/</code>，跟 sleep-toggle 平级——符合 44 手册"本地工具归 toolbox"。</li>
+</ul>
+</div>
+
+<footer>
+~/zephryve/toolbox/session-title-zh/ · session_title_zh.py（scan/apply/hook）+ README.md + 本方案页<br>
+机制实测：ai-title 默认英文 / custom-title 压 ai-title 写一次锁死 / 外部写 picker 认（0fc67be7 实验通过）
+</footer>
+
+</div>
+</body>
+</html>
